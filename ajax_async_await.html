@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX com async/await</title>
+</head>
+<body>
+  <h1>Exemplo AJAX com async/await</h1>
+  <button id="btnCarregar">Carregar Dados</button>
+  <div id="resultado"></div>
+
+  <script>
+    // Função assíncrona que busca dados de uma API
+    async function carregarDados() {
+      try {
+        // Exemplo: API pública de usuários
+        const resposta = await fetch('https://jsonplaceholder.typicode.com/users');
+
+        // Verifica se houve erro na resposta
+        if (!resposta.ok) {
+          throw new Error('Erro na requisição: ' + resposta.status);
+        }
+
+        // Aguarda o processamento do JSON
+        const dados = await resposta.json();
+
+        // Exibe o resultado na página
+        const div = document.getElementById('resultado');
+        div.innerHTML = '<h2>Usuários:</h2>' +
+          dados.map(u => `<p><strong>${u.name}</strong> - ${u.email}</p>`).join('');
+
+      } catch (erro) {
+        document.getElementById('resultado').innerHTML =
+          `<p style="color:red;">${erro.message}</p>`;
+      }
+    }
+
+    // Evento de clique no botão
+    document.getElementById('btnCarregar').addEventListener('click', carregarDados);
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX com Promises</title>
+</head>
+<body>
+  <h1>Exemplo AJAX com Promises</h1>
+  <button id="btnCarregar">Carregar Dados</button>
+  <div id="resultado"></div>
+
+  <script>
+    function carregarDados() {
+      const url = 'https://jsonplaceholder.typicode.com/users';
+      const divResultado = document.getElementById('resultado');
+
+      // Inicia a requisição
+      fetch(url)
+        // Converte a resposta em JSON
+        .then(resposta => {
+          if (!resposta.ok) {
+            throw new Error('Erro na requisição: ' + resposta.status);
+          }
+          return resposta.json();
+        })
+        // Processa os dados recebidos
+        .then(dados => {
+          const html = dados
+            .map(u => `<p><strong>${u.name}</strong> - ${u.email}</p>`)
+            .join('');
+          divResultado.innerHTML = '<h2>Usuários:</h2>' + html;
+        })
+        // Captura e exibe erros
+        .catch(erro => {
+          divResultado.innerHTML = `<p style="color:red;">${erro.message}</p>`;
+        });
+    }
+
+    document.getElementById('btnCarregar').addEventListener('click', carregarDados);
+  </script>
+</body>
+</html>

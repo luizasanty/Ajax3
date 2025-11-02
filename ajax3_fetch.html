@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pesquisar CEP (fetch)</title>
+  <style>
+    body{font-family: Arial, Helvetica, sans-serif; padding:20px;}
+    input{margin:6px 0; padding:8px; width:300px}
+    button{padding:8px 12px}
+    label{display:block; margin-top:8px}
+  </style>
+</head>
+<body>
+  <div id="demo">
+    <h1>Pesquisar CEP (fetch)</h1>
+
+    <input type="text" name="cep" id="cep" placeholder="Digite seu CEP (somente números)">
+    <button type="button" id="btnPesquisar">Pesquisar CEP</button>
+
+    <br>
+    <input type="text" id="logradouro" placeholder="Logradouro">
+    <br>
+    <input type="text" id="complemento" placeholder="Complemento">
+    <br>
+    <input type="text" id="bairro" placeholder="Bairro">
+    <br>
+    <input type="text" id="localidade" placeholder="Cidade">
+    <br>
+    <input type="text" id="uf" placeholder="UF">
+  </div>
+
+  <script>
+    async function loadDoc() {
+      const raw = document.getElementById('cep').value;
+      const cep = raw.replace(/\D/g, '');
+
+      if (!cep || cep.length !== 8) {
+        alert('Informe um CEP válido (8 dígitos).');
+        return;
+      }
+
+      const url = `https://viacep.com.br/ws/${cep}/json/`;
+
+      try {
+        const resp = await fetch(url);
+
+        if (!resp.ok) throw new Error(`Erro HTTP: ${resp.status}`);
+
+        const endereco = await resp.json();
+
+        if (endereco.erro) {
+          alert('CEP não encontrado.');
+          return;
+        }
+
+        document.getElementById('logradouro').value = endereco.logradouro || '';
+        document.getElementById('complemento').value = endereco.complemento || '';
+        document.getElementById('bairro').value = endereco.bairro || '';
+        document.getElementById('localidade').value = endereco.localidade || '';
+        document.getElementById('uf').value = endereco.uf || '';
+
+      } catch (err) {
+        console.error('Erro ao buscar CEP:', err);
+        alert('Erro ao buscar o CEP. Verifique o console.');
+      }
+    }
+
+    document.getElementById('btnPesquisar').addEventListener('click', loadDoc);
+    document.getElementById('cep').addEventListener('keydown', function(e){
+      if (e.key === 'Enter') loadDoc();
+    });
+  </script>
+</body>
+</html>
